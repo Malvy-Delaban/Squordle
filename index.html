@@ -1,0 +1,2217 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+<style>
+  div {
+    font-family: 'Roboto', sans-serif;
+  }
+ 
+    body {
+        background-image: url("poke.jpg");
+        background-size: cover;
+        justify-content: center;
+        display: flex;
+        align-items: center;
+    }
+
+    #logo {
+        width: 12rem;
+        margin-bottom: 2em;
+    }
+
+    .selection {
+        margin-bottom: 2em;
+    }
+
+    select {
+        line-height: 1.5em;
+        padding: 0.5em;
+        margin-right: 1rem;
+        border-radius: 5px;
+        font-weight: bold;
+        border: thin solid lightgrey;
+
+        /* reset */
+        margin: 0;      
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+    }
+
+    td {
+        padding: 0.5rem;
+        margin: 1rem;
+        border-radius: 0.2rem;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    th {
+        background-color: rgb(51, 48, 48);
+        color: white;
+        padding: 0.5rem 2rem;
+        margin: 1rem;
+        border-radius: 0.2rem;
+    }
+
+    .poke_ico {
+      background-color: rgb(250, 250, 250);
+      border-radius: 5px;
+      border: solid grey 3px;
+      height: 4rem;
+      width: 4rem;
+    }
+
+    #pic {
+      height: 4rem;
+      border-radius: 0.5rem;
+    }
+
+    button {
+        line-height: 1.5em;
+        padding: 0.5em 1em 0.5em 1em;
+        border-radius: 5px;
+        font-weight: bold;
+        border: thin solid lightgrey;
+    }
+
+    #solution-button {
+        position: absolute;
+        bottom: 2rem;
+        right: 2rem;
+    }
+
+    .main-container {
+        justify-content: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .true {
+        background-color: #7eff82;
+    }
+
+    .part-wrong {
+        background-color: #ffb773;
+    }
+
+    .wrong {
+        background-color: #ff7e7e;
+    }
+
+    .type {
+      border-radius: 5px;
+      width: 8rem;
+    }
+</style>
+
+<script>
+
+const BodyTypeUrls = [
+"https://static.wikia.nocookie.net/pokemon/images/9/9d/Shape01.png",
+"https://static.wikia.nocookie.net/pokemon/images/4/4c/Shape02.png",
+"https://static.wikia.nocookie.net/pokemon/images/d/de/Shape03.png",
+"https://static.wikia.nocookie.net/pokemon/images/8/8a/Shape04.png",
+"https://static.wikia.nocookie.net/pokemon/images/8/86/Shape05.png",
+"https://static.wikia.nocookie.net/pokemon/images/1/16/Shape06.png",
+"https://static.wikia.nocookie.net/pokemon/images/a/a7/Shape07.png",
+"https://static.wikia.nocookie.net/pokemon/images/6/6f/Shape08.png",
+"https://static.wikia.nocookie.net/pokemon/images/2/22/Shape09.png",
+"https://static.wikia.nocookie.net/pokemon/images/6/65/Shape10.png",
+"https://static.wikia.nocookie.net/pokemon/images/0/06/Shape11.png",
+"https://static.wikia.nocookie.net/pokemon/images/b/b6/Shape12.png",
+"https://static.wikia.nocookie.net/pokemon/images/5/5a/Shape13.png",
+"https://static.wikia.nocookie.net/pokemon/images/0/06/Shape14.png",
+];
+
+const BodyShapes = {
+  HEAD_ONLY: 0,
+  SNAKE_LIKE: 1,
+  FISH_LIKE: 2,
+  HEAD_AND_ARM: 3,
+  HEAD_AND_NO_LIMBS: 4,
+  BIPED_UPPER_LIMBS: 5,
+  BIPED_NO_LIMBS: 6,
+  QUADRUPED: 7,
+  TWO_WINGS: 8,
+  TENTACLES: 9,
+  MULTIPLE_BODIES: 10,
+  BIPED_NO_TAIL_UPPER_LIMBS: 11,
+  FOUR_WINGS: 12,
+  INSECT_LIKE: 13,
+}
+
+const PokemonTypeUrls = [
+  "https://upload.wikimedia.org/wikipedia/commons/1/1d/Logo_Type_Normal_Pokemon_EB.png",
+  "https://upload.wikimedia.org/wikipedia/commons/d/da/Logo_Type_Feu_Pokemon_EB.png",
+  "https://upload.wikimedia.org/wikipedia/commons/b/b6/Logo_Type_Eau_Pokemon_EB.png",
+  "https://upload.wikimedia.org/wikipedia/commons/3/31/Logo_Type_%C3%89lectrik_Pokemon_EB.png",
+  "https://upload.wikimedia.org/wikipedia/commons/1/18/Logo_Type_Plante_Pokemon_EB.png",
+  "https://upload.wikimedia.org/wikipedia/commons/d/dd/Logo_Type_Glace_Pokemon_EB.png",
+  "https://upload.wikimedia.org/wikipedia/commons/2/22/Logo_Type_Combat_Pokemon_EB.png",
+  "https://upload.wikimedia.org/wikipedia/commons/f/f9/Logo_Type_Poison_Pokemon_EB.png",
+  "https://upload.wikimedia.org/wikipedia/commons/7/77/Logo_Type_Sol_Pokemon_EB.png",
+  "https://upload.wikimedia.org/wikipedia/commons/e/e9/Logo_Type_Vol_Pokemon_EB.png",
+  "https://upload.wikimedia.org/wikipedia/commons/2/2f/Logo_Type_Psy_Pokemon_EB.png",
+  "https://upload.wikimedia.org/wikipedia/commons/9/90/Logo_Type_Insecte_Pokemon_EB.png",
+  "https://upload.wikimedia.org/wikipedia/commons/8/84/Logo_Type_Roche_Pokemon_EB.png",
+  "https://upload.wikimedia.org/wikipedia/commons/d/da/Logo_Type_Spectre_Pokemon_EB.png",
+  "https://upload.wikimedia.org/wikipedia/commons/5/51/Logo_Type_Dragon_Pokemon_EB.png",
+  "https://upload.wikimedia.org/wikipedia/commons/4/43/Logo_Type_Tenebres_Pokemon_EB.png",
+  "https://upload.wikimedia.org/wikipedia/commons/6/6e/Logo_Type_Acier_Pokemon_EB.png",
+  "https://upload.wikimedia.org/wikipedia/commons/5/5d/Logo_Type_F%C3%A9e_Pokemon_EB.png",
+];
+
+const PokemonTypes = {
+  NORMAL: 0,
+  FEU: 1,
+  EAU: 2,
+  ELECTRIQUE: 3,
+  PLANTE: 4,
+  GLACE: 5,
+  COMBAT: 6,
+  POISON: 7,
+  SOL: 8,
+  VOL: 9,
+  PSY: 10,
+  INSECTE: 11,
+  ROCHE: 12,
+  SPECTRE: 13,
+  DRAGON: 14,
+  TENEBRES: 15,
+  ACIER: 16,
+  FEE: 17,
+}
+
+
+// Since I did not find any free API that have those data, I simply generated them with ChatGPT
+    var pokes = [
+    {
+    Index: 1,
+    EN_Name: "Bulbasaur",
+    FR_Name: "Bulbizarre",
+    Type: [PokemonTypes.PLANTE, PokemonTypes.POISON],
+    Weight: 6.9,
+    Height: 0.7,
+    Generation: 1,
+    Body_Type: BodyShapes.QUADRUPED,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/bulbasaur.png"
+  },
+  {
+    Index: 2,
+    EN_Name: "Ivysaur",
+    FR_Name: "Herbizarre",
+    Type: [PokemonTypes.PLANTE, PokemonTypes.POISON],
+    Weight: 13.0,
+    Height: 1.0,
+    Generation: 1,
+    Body_Type: BodyShapes.QUADRUPED,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/ivysaur.png"
+  },
+  {
+    Index: 3,
+    EN_Name: "Venusaur",
+    FR_Name: "Florizarre",
+    Type: [PokemonTypes.PLANTE, PokemonTypes.POISON],
+    Weight: 100.0,
+    Height: 2.0,
+    Generation: 1,
+    Body_Type: BodyShapes.QUADRUPED,
+    EvolutionStage: 3,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/venusaur.png"
+  },
+  {
+    Index: 4,
+    EN_Name: "Charmander",
+    FR_Name: "Salamèche",
+    Type: [PokemonTypes.FEU],
+    Weight: 8.5,
+    Height: 0.6,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_UPPER_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/charmander.png"
+  },
+  {
+    Index: 5,
+    EN_Name: "Charmeleon",
+    FR_Name: "Reptincel",
+    Type: [PokemonTypes.FEU],
+    Weight: 19.0,
+    Height: 1.1,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_UPPER_LIMBS,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/charmeleon.png"
+  },
+  {
+    Index: 6,
+    EN_Name: "Charizard",
+    FR_Name: "Dracaufeu",
+    Type: [PokemonTypes.FEU, PokemonTypes.VOL],
+    Weight: 90.5,
+    Height: 1.7,
+    Generation: 1,
+    Body_Type: BodyShapes.TWO_WINGS,
+    EvolutionStage: 3,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/charizard.png"
+  },
+  {
+    Index: 7,
+    EN_Name: "Squirtle",
+    FR_Name: "Carapuce",
+    Type: [PokemonTypes.EAU],
+    Weight: 9.0,
+    Height: 0.5,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_UPPER_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/squirtle.png"
+  },
+  {
+    Index: 8,
+    EN_Name: "Wartortle",
+    FR_Name: "Carabaffe",
+    Type: [PokemonTypes.EAU],
+    Weight: 22.5,
+    Height: 1.0,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_UPPER_LIMBS,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/wartortle.png"
+  },
+  {
+    Index: 9,
+    EN_Name: "Blastoise",
+    FR_Name: "Tortank",
+    Type: [PokemonTypes.EAU],
+    Weight: 85.5,
+    Height: 1.6,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_UPPER_LIMBS,
+    EvolutionStage: 3,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/blastoise.png"
+  },
+  {
+    Index: 10,
+    EN_Name: "Caterpie",
+    FR_Name: "Chenipan",
+    Type: [PokemonTypes.INSECTE],
+    Weight: 2.9,
+    Height: 0.3,
+    Generation: 1,
+    Body_Type: BodyShapes.INSECT_LIKE,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/caterpie.png"
+  },
+  {
+    Index: 11,
+    EN_Name: "Metapod",
+    FR_Name: "Chrysacier",
+    Type: [PokemonTypes.INSECTE],
+    Weight: 9.9,
+    Height: 0.7,
+    Generation: 1,
+    Body_Type: BodyShapes.INSECT_LIKE,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/metapod.png"
+  },
+  {
+    Index: 12,
+    EN_Name: "Butterfree",
+    FR_Name: "Papilusion",
+    Type: [PokemonTypes.INSECTE, PokemonTypes.VOL],
+    Weight: 32.0,
+    Height: 1.1,
+    Generation: 1,
+    Body_Type: BodyShapes.TWO_WINGS,
+    EvolutionStage: 3,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/butterfree.png"
+  },
+  {
+    Index: 13,
+    EN_Name: "Weedle",
+    FR_Name: "Aspicot",
+    Type: [PokemonTypes.INSECTE, PokemonTypes.POISON],
+    Weight: 3.2,
+    Height: 0.3,
+    Generation: 1,
+    Body_Type: BodyShapes.INSECT_LIKE,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/weedle.png"
+  },
+  {
+    Index: 14,
+    EN_Name: "Kakuna",
+    FR_Name: "Coconfort",
+    Type: [PokemonTypes.INSECTE, PokemonTypes.POISON],
+    Weight: 10.0,
+    Height: 0.6,
+    Generation: 1,
+    Body_Type: BodyShapes.INSECT_LIKE,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/kakuna.png"
+  },
+  {
+    Index: 15,
+    EN_Name: "Beedrill",
+    FR_Name: "Dardargnan",
+    Type: [PokemonTypes.INSECTE, PokemonTypes.POISON],
+    Weight: 29.5,
+    Height: 1.0,
+    Generation: 1,
+    Body_Type: BodyShapes.INSECT_LIKE,
+    EvolutionStage: 3,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/beedrill.png"
+  },
+  {
+    Index: 16,
+    EN_Name: "Pidgey",
+    FR_Name: "Roucool",
+    Type: [PokemonTypes.NORMAL, PokemonTypes.VOL],
+    Weight: 1.8,
+    Height: 0.3,
+    Generation: 1,
+    Body_Type: BodyShapes.TWO_WINGS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/pidgey.png"
+  },
+  {
+    Index: 17,
+    EN_Name: "Pidgeotto",
+    FR_Name: "Roucoups",
+    Type: [PokemonTypes.NORMAL, PokemonTypes.VOL],
+    Weight: 30.0,
+    Height: 1.1,
+    Generation: 1,
+    Body_Type: BodyShapes.TWO_WINGS,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/pidgeotto.png"
+  },
+  {
+    Index: 18,
+    EN_Name: "Pidgeot",
+    FR_Name: "Roucarnage",
+    Type: [PokemonTypes.NORMAL, PokemonTypes.VOL],
+    Weight: 39.5,
+    Height: 1.5,
+    Generation: 1,
+    Body_Type: BodyShapes.TWO_WINGS,
+    EvolutionStage: 3,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/pidgeot.png"
+  },
+  {
+    Index: 19,
+    EN_Name: "Rattata",
+    FR_Name: "Rattata",
+    Type: [PokemonTypes.NORMAL],
+    Weight: 3.5,
+    Height: 0.3,
+    Generation: 1,
+    Body_Type: BodyShapes.QUADRUPED,
+    EvolutionStage: 1,
+    Image:
+      "https://img.pokemondb.net/sprites/sword-shield/icon/rattata.png",
+  },
+  {
+    Index: 20,
+    EN_Name: "Raticate",
+    FR_Name: "Rattatac",
+    Type: [PokemonTypes.NORMAL],
+    Weight: 18.5,
+    Height: 0.7,
+    Generation: 1,
+    Body_Type: BodyShapes.QUADRUPED,
+    EvolutionStage: 2,
+    Image:
+      "https://img.pokemondb.net/sprites/sword-shield/icon/raticate.png",
+  },
+  {
+    Index: 21,
+    EN_Name: "Spearow",
+    FR_Name: "Piafabec",
+    Type: [PokemonTypes.NORMAL, PokemonTypes.VOL],
+    Weight: 2.0,
+    Height: 0.3,
+    Generation: 1,
+    Body_Type: BodyShapes.TWO_WINGS,
+    EvolutionStage: 1,
+    Image:
+      "https://img.pokemondb.net/sprites/sword-shield/icon/spearow.png",
+  },
+  {
+    Index: 22,
+    EN_Name: "Fearow",
+    FR_Name: "Rapasdepic",
+    Type: [PokemonTypes.NORMAL, PokemonTypes.VOL],
+    Weight: 38.0,
+    Height: 1.2,
+    Generation: 1,
+    Body_Type: BodyShapes.TWO_WINGS,
+    EvolutionStage: 2,
+    Image:
+      "https://img.pokemondb.net/sprites/sword-shield/icon/fearow.png",
+  },
+  {
+    Index: 23,
+    EN_Name: "Ekans",
+    FR_Name: "Abo",
+    Type: [PokemonTypes.POISON],
+    Weight: 6.9,
+    Height: 2.0,
+    Generation: 1,
+    Body_Type: BodyShapes.SNAKE_LIKE,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/ekans.png",
+  },
+  {
+    Index: 24,
+    EN_Name: "Arbok",
+    FR_Name: "Arbok",
+    Type: [PokemonTypes.POISON],
+    Weight: 65.0,
+    Height: 3.5,
+    Generation: 1,
+    Body_Type: BodyShapes.SNAKE_LIKE,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/arbok.png",
+  }, 
+  {
+    Index: 25,
+    EN_Name: "Pikachu",
+    FR_Name: "Pikachu",
+    Type: [PokemonTypes.ELECTRIQUE],
+    Weight: 6.0,
+    Height: 0.4,
+    Generation: 1,
+    Body_Type: BodyShapes.QUADRUPED,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/pikachu.png",
+  },
+  {
+    Index: 26,
+    EN_Name: "Raichu",
+    FR_Name: "Raichu",
+    Type: [PokemonTypes.ELECTRIQUE],
+    Weight: 30.0,
+    Height: 0.8,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_TAIL_UPPER_LIMBS,
+    EvolutionStage: 3,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/raichu.png",
+  },
+  {
+    Index: 27,
+    EN_Name: "Sandshrew",
+    FR_Name: "Sabelette",
+    Type: [PokemonTypes.SOL],
+    Weight: 12.0,
+    Height: 0.6,
+    Generation: 1,
+    Body_Type: BodyShapes.QUADRUPED,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/sandshrew.png",
+  },
+  {
+    Index: 28,
+    EN_Name: "Sandslash",
+    FR_Name: "Sablaireau",
+    Type: [PokemonTypes.SOL],
+    Weight: 29.5,
+    Height: 1.0,
+    Generation: 1,
+    Body_Type: BodyShapes.QUADRUPED,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/sandslash.png",
+  },
+  {
+    Index: 29,
+    EN_Name: "Nidoran♀",
+    FR_Name: "Nidoran♀",
+    Type: [PokemonTypes.POISON],
+    Weight: 7.0,
+    Height: 0.4,
+    Generation: 1,
+    Body_Type: BodyShapes.QUADRUPED,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/nidoran-f.png",
+  },
+  {
+    Index: 30,
+    EN_Name: "Nidorina",
+    FR_Name: "Nidorina",
+    Type: [PokemonTypes.POISON],
+    Weight: 20.0,
+    Height: 0.8,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_TAIL_UPPER_LIMBS,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/nidorina.png",
+  },
+  {
+    index: 31,
+    EN_Name: "Nidoqueen",
+    FR_Name: "Nidoqueen",
+    Type: [PokemonTypes.POISON, PokemonTypes.SOL],
+    Weight: 60.0,
+    Height: 1.3,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_TAIL_UPPER_LIMBS,
+    EvolutionStage: 3,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/nidoqueen.png",
+  },
+  {
+    index: 32,
+    EN_Name: "Nidoran♂",
+    FR_Name: "Nidoran♂",
+    Type: [PokemonTypes.POISON],
+    Weight: 9.0,
+    Height: 0.5,
+    Generation: 1,
+    Body_Type: BodyShapes.QUADRUPED,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/nidoran-m.png",
+  },
+  {
+    Index: 33,
+    EN_Name: "Nidorino",
+    FR_Name: "Nidorino",
+    Type: [PokemonTypes.POISON],
+    Weight: 19.5,
+    Height: 0.9,
+    Generation: 1,
+    Body_Type: BodyShapes.QUADRUPED,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/nidorino.png"
+  },
+  {
+    Index: 34,
+    EN_Name: "Nidoking",
+    FR_Name: "Nidoking",
+    Type: [PokemonTypes.POISON, PokemonTypes.SOL],
+    Weight: 62.0,
+    Height: 1.4,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_TAIL_UPPER_LIMBS,
+    EvolutionStage: 3,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/nidoking.png"
+  },
+  {
+    Index: 35,
+    EN_Name: "Clefairy",
+    FR_Name: "Mélofée",
+    Type: [PokemonTypes.FEE],
+    Weight: 7.5,
+    Height: 0.6,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_TAIL_UPPER_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/clefairy.png"
+  },
+  {
+    Index: 36,
+    EN_Name: "Clefable",
+    FR_Name: "Mélodelfe",
+    Type: [PokemonTypes.FEE],
+    Weight: 40.0,
+    Height: 1.3,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_TAIL_UPPER_LIMBS,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/clefable.png"
+  },
+  {
+    Index: 37,
+    EN_Name: "Vulpix",
+    FR_Name: "Goupix",
+    Type: [PokemonTypes.FEU],
+    Weight: 9.9,
+    Height: 0.6,
+    Generation: 1,
+    Body_Type: BodyShapes.QUADRUPED,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/vulpix.png"
+  },
+  {
+    Index: 38,
+    EN_Name: "Ninetales",
+    FR_Name: "Feunard",
+    Type: [PokemonTypes.FEU],
+    Weight: 19.9,
+    Height: 1.1,
+    Generation: 1,
+    Body_Type: BodyShapes.QUADRUPED,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/ninetales.png"
+  },
+  {
+    index: 39,
+    EN_Name: "Jigglypuff",
+    FR_Name: "Rondoudou",
+    Type: [PokemonTypes.NORMAL, PokemonTypes.FEE],
+    Weight: 5.5,
+    Height: 0.5,
+    Generation: 1,
+    Body_Type: BodyShapes.HEAD_AND_NO_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/jigglypuff.png",
+  },
+  {
+    index: 40,
+    EN_Name: "Wigglytuff",
+    FR_Name: "Grodoudou",
+    Type: [PokemonTypes.NORMAL, PokemonTypes.FEE],
+    Weight: 12.0,
+    Height: 1.0,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_TAIL_UPPER_LIMBS,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/wigglytuff.png",
+  },
+  {
+    index: 41,
+    EN_Name: "Zubat",
+    FR_Name: "Nosferapti",
+    Type: [PokemonTypes.POISON, PokemonTypes.VOL],
+    Weight: 7.5,
+    Height: 0.8,
+    Generation: 1,
+    Body_Type: BodyShapes.TWO_WINGS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/zubat.png",
+  },
+  {
+    index: 42,
+    EN_Name: "Golbat",
+    FR_Name: "Nosferalto",
+    Type: [PokemonTypes.POISON, PokemonTypes.VOL],
+    Weight: 55.0,
+    Height: 1.6,
+    Generation: 1,
+    Body_Type: BodyShapes.TWO_WINGS,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/golbat.png",
+  },
+  {
+    index: 43,
+    EN_Name: "Oddish",
+    FR_Name: "Mystherbe",
+    Type: [PokemonTypes.PLANTE, PokemonTypes.POISON],
+    Weight: 5.4,
+    Height: 0.5,
+    Generation: 1,
+    Body_Type: BodyShapes.HEAD_AND_NO_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/oddish.png",
+  },
+  {
+    Index: 44,
+    EN_Name: "Gloom",
+    FR_Name: "Ortide",
+    Type: [PokemonTypes.PLANTE, PokemonTypes.POISON],
+    Weight: 8.6,
+    Height: 0.8,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_LIMBS,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/gloom.png"
+  },
+  {
+    Index: 45,
+    EN_Name: "Vileplume",
+    FR_Name: "Rafflesia",
+    Type: [PokemonTypes.PLANTE, PokemonTypes.POISON],
+    Weight: 18.6,
+    Height: 1.2,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_LIMBS,
+    EvolutionStage: 3,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/vileplume.png"
+  },
+  {
+    Index: 46,
+    EN_Name: "Paras",
+    FR_Name: "Paras",
+    Type: [PokemonTypes.INSECTE, PokemonTypes.PLANTE],
+    Weight: 5.4,
+    Height: 0.3,
+    Generation: 1,
+    Body_Type: BodyShapes.INSECT_LIKE,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/paras.png"
+  },
+  {
+    Index: 47,
+    EN_Name: "Parasect",
+    FR_Name: "Parasect",
+    Type: [PokemonTypes.INSECTE, PokemonTypes.PLANTE],
+    Weight: 29.5,
+    Height: 1.0,
+    Generation: 1,
+    Body_Type: BodyShapes.INSECT_LIKE,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/parasect.png"
+  },
+  {
+    Index: 48,
+    EN_Name: "Venonat",
+    FR_Name: "Mimitoss",
+    Type: [PokemonTypes.INSECTE, PokemonTypes.POISON],
+    Weight: 30.0,
+    Height: 1.0,
+    Generation: 1,
+    Body_Type: BodyShapes.HEAD_AND_NO_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/venonat.png"
+  },
+  {
+    Index: 49,
+    EN_Name: "Venomoth",
+    FR_Name: "Aéromite",
+    Type: [PokemonTypes.INSECTE, PokemonTypes.POISON],
+    Weight: 12.5,
+    Height: 1.5,
+    Generation: 1,
+    Body_Type: BodyShapes.TWO_WINGS,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/venomoth.png"
+  },
+  {
+    Index: 50,
+    EN_Name: "Diglett",
+    FR_Name: "Taupiqueur",
+    Type: [PokemonTypes.SOL],
+    Weight: 0.8,
+    Height: 0.2,
+    Generation: 1,
+    Body_Type: BodyShapes.HEAD_AND_NO_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/diglett.png"
+  },
+  {
+    index: 51,
+    EN_Name: "Dugtrio",
+    FR_Name: "Triopikeur",
+    Type: [PokemonTypes.SOL],
+    Weight: 33.3,
+    Height: 0.7,
+    Generation: 1,
+    Body_Type: BodyShapes.HEAD_AND_NO_LIMBS,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/dugtrio.png"
+  },
+  {
+    index: 52,
+    EN_Name: "Meowth",
+    FR_Name: "Miaouss",
+    Type: [PokemonTypes.NORMAL],
+    Weight: 4.2,
+    Height: 0.4,
+    Generation: 1,
+    Body_Type: BodyShapes.QUADRUPED,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/meowth.png"
+  },
+  {
+    index: 53,
+    EN_Name: "Persian",
+    FR_Name: "Persian",
+    Type: [PokemonTypes.NORMAL],
+    Weight: 32.0,
+    Height: 1.0,
+    Generation: 1,
+    Body_Type: BodyShapes.QUADRUPED,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/persian.png"
+  },
+  {
+    index: 54,
+    EN_Name: "Psyduck",
+    FR_Name: "Psykokwak",
+    Type: [PokemonTypes.EAU],
+    Weight: 19.6,
+    Height: 0.8,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_TAIL_UPPER_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/psyduck.png"
+  },
+  {
+    index: 55,
+    EN_Name: "Golduck",
+    FR_Name: "Akwakwak",
+    Type: [PokemonTypes.EAU],
+    Weight: 76.6,
+    Height: 1.7,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_TAIL_UPPER_LIMBS,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/golduck.png"
+  },
+  {
+    index: 56,
+    EN_Name: "Mankey",
+    FR_Name: "Férosinge",
+    Type: [PokemonTypes.COMBAT],
+    Weight: 28.0,
+    Height: 0.5,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_TAIL_UPPER_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/mankey.png"
+  },
+  {
+    Index: 57,
+    EN_Name: "Primeape",
+    FR_Name: "Colossinge",
+    Type: [PokemonTypes.COMBAT],
+    Weight: 32.0,
+    Height: 1.0,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_TAIL_UPPER_LIMBS,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/primeape.png"
+  },
+  {
+    Index: 58,
+    EN_Name: "Growlithe",
+    FR_Name: "Caninos",
+    Type: [PokemonTypes.FEU],
+    Weight: 19.0,
+    Height: 0.7,
+    Generation: 1,
+    Body_Type: BodyShapes.QUADRUPED,
+    EvolutionStage: 1,
+    Image:
+      "https://img.pokemondb.net/sprites/sword-shield/icon/growlithe.png",
+  },
+  {
+    Index: 59,
+    EN_Name: "Arcanine",
+    FR_Name: "Arcanin",
+    Type: [PokemonTypes.FEU],
+    Weight: 155.0,
+    Height: 1.9,
+    Generation: 1,
+    Body_Type: BodyShapes.QUADRUPED,
+    EvolutionStage: 2,
+    Image:
+      "https://img.pokemondb.net/sprites/sword-shield/icon/arcanine.png",
+  },
+  {
+    Index: 60,
+    EN_Name: "Poliwag",
+    FR_Name: "Ptitard",
+    Type: [PokemonTypes.EAU],
+    Weight: 12.4,
+    Height: 0.6,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_LIMBS,
+    EvolutionStage: 1,
+    Image:
+      "https://img.pokemondb.net/sprites/sword-shield/icon/poliwag.png",
+  },
+  {
+    Index: 61,
+    EN_Name: "Poliwhirl",
+    FR_Name: "Tetarte",
+    Type: [PokemonTypes.EAU],
+    Weight: 20.0,
+    Height: 1.0,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_TAIL_UPPER_LIMBS,
+    EvolutionStage: 2,
+    Image:
+      "https://img.pokemondb.net/sprites/sword-shield/icon/poliwhirl.png",
+  },
+  {
+    Index: 62,
+    EN_Name: "Poliwrath",
+    FR_Name: "Tartard",
+    Type: [PokemonTypes.EAU, PokemonTypes.COMBAT],
+    Weight: 54.0,
+    Height: 1.3,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_TAIL_UPPER_LIMBS,
+    EvolutionStage: 3,
+    Image:
+      "https://img.pokemondb.net/sprites/sword-shield/icon/poliwrath.png",
+  },
+  {
+    Index: 63,
+    EN_Name: "Abra",
+    FR_Name: "Abra",
+    Type: [PokemonTypes.PSY],
+    Weight: 19.5,
+    Height: 0.9,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_UPPER_LIMBS,
+    EvolutionStage: 1,
+    Image:
+      "https://img.pokemondb.net/sprites/sword-shield/icon/abra.png",
+  },
+  {
+    Index: 64,
+    EN_Name: "Kadabra",
+    FR_Name: "Kadabra",
+    Type: [PokemonTypes.PSY],
+    Weight: 56.5,
+    Height: 1.3,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_UPPER_LIMBS,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/kadabra.png"
+  },
+  {
+    Index: 65,
+    EN_Name: "Alakazam",
+    FR_Name: "Alakazam",
+    Type: [PokemonTypes.PSY],
+    Weight: 48.0,
+    Height: 1.5,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_UPPER_LIMBS,
+    EvolutionStage: 3,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/alakazam.png"
+  },
+  {
+    Index: 66,
+    EN_Name: "Machop",
+    FR_Name: "Machoc",
+    Type: [PokemonTypes.COMBAT],
+    Weight: 19.5,
+    Height: 0.8,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_TAIL_UPPER_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/machop.png"
+  },
+  {
+    Index: 67,
+    EN_Name: "Machoke",
+    FR_Name: "Machopeur",
+    Type: [PokemonTypes.COMBAT],
+    Weight: 70.5,
+    Height: 1.5,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_TAIL_UPPER_LIMBS,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/machoke.png"
+  },
+  {
+    Index: 68,
+    EN_Name: "Machamp",
+    FR_Name: "Mackogneur",
+    Type: [PokemonTypes.COMBAT],
+    Weight: 130.0,
+    Height: 1.6,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_TAIL_UPPER_LIMBS,
+    EvolutionStage: 3,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/machamp.png"
+  },
+  {
+    Index: 69,
+    EN_Name: "Bellsprout",
+    FR_Name: "Chétiflor",
+    Type: [PokemonTypes.PLANTE, PokemonTypes.POISON],
+    Weight: 4.0,
+    Height: 0.7,
+    Generation: 1,
+    Body_Type: BodyShapes.HEAD_AND_NO_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/bellsprout.png",
+  },
+  {
+    Index: 70,
+    EN_Name: "Weepinbell",
+    FR_Name: "Empiflor",
+    Type: [PokemonTypes.PLANTE, PokemonTypes.POISON],
+    Weight: 6.4,
+    Height: 1.0,
+    Generation: 1,
+    Body_Type: BodyShapes.HEAD_AND_NO_LIMBS,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/weepinbell.png",
+  },
+  {
+    Index: 71,
+    EN_Name: "Victreebel",
+    FR_Name: "Boustiflor",
+    Type: [PokemonTypes.PLANTE, PokemonTypes.POISON],
+    Weight: 15.5,
+    Height: 1.7,
+    Generation: 1,
+    Body_Type: BodyShapes.HEAD_AND_NO_LIMBS,
+    EvolutionStage: 3,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/victreebel.png",
+  },
+  {
+    Index: 72,
+    EN_Name: "Tentacool",
+    FR_Name: "Tentacool",
+    Type: [PokemonTypes.EAU, PokemonTypes.POISON],
+    Weight: 45.5,
+    Height: 0.9,
+    Generation: 1,
+    Body_Type: BodyShapes.TENTACLES,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/tentacool.png",
+  },
+  {
+    Index: 73,
+    EN_Name: "Tentacruel",
+    FR_Name: "Tentacruel",
+    Type: [PokemonTypes.EAU, PokemonTypes.POISON],
+    Weight: 55.0,
+    Height: 1.6,
+    Generation: 1,
+    Body_Type: BodyShapes.TENTACLES,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/tentacruel.png",
+  },
+  {
+    Index: 74,
+    EN_Name: "Geodude",
+    FR_Name: "Racaillou",
+    Type: [PokemonTypes.ROCHE, PokemonTypes.SOL],
+    Weight: 20.0,
+    Height: 0.4,
+    Generation: 1,
+    Body_Type: BodyShapes.HEAD_AND_ARM,
+    EvolutionStage: 1,
+    Image:
+      "https://img.pokemondb.net/sprites/sword-shield/icon/geodude.png",
+  },
+  {
+    Index: 75,
+    EN_Name: "Graveler",
+    FR_Name: "Gravalanch",
+    Type: [PokemonTypes.ROCHE, PokemonTypes.SOL],
+    Weight: 105.0,
+    Height: 1.0,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_TAIL_UPPER_LIMBS,
+    EvolutionStage: 2,
+    Image:
+      "https://img.pokemondb.net/sprites/sword-shield/icon/graveler.png",
+  },
+  {
+    Index: 76,
+    EN_Name: "Golem",
+    FR_Name: "Grolem",
+    Type: [PokemonTypes.ROCHE, PokemonTypes.SOL],
+    Weight: 300.0,
+    Height: 1.4,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_TAIL_UPPER_LIMBS,
+    EvolutionStage: 3,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/golem.png",
+  },
+  {
+    Index: 77,
+    EN_Name: "Ponyta",
+    FR_Name: "Ponyta",
+    Type: [PokemonTypes.FEU],
+    Weight: 30.0,
+    Height: 1.0,
+    Generation: 1,
+    Body_Type: BodyShapes.QUADRUPED,
+    EvolutionStage: 1,
+    Image:
+      "https://img.pokemondb.net/sprites/sword-shield/icon/ponyta.png",
+  },
+  {
+    Index: 78,
+    EN_Name: "Rapidash",
+    FR_Name: "Galopa",
+    Type: [PokemonTypes.FEU],
+    Weight: 95.0,
+    Height: 1.7,
+    Generation: 1,
+    Body_Type: BodyShapes.QUADRUPED,
+    EvolutionStage: 2,
+    Image:
+      "https://img.pokemondb.net/sprites/sword-shield/icon/rapidash.png",
+  },
+  {
+    Index: 79,
+    EN_Name: "Slowpoke",
+    FR_Name: "Ramoloss",
+    Type: [PokemonTypes.EAU, PokemonTypes.PSY],
+    Weight: 36.0,
+    Height: 1.2,
+    Generation: 1,
+    Body_Type: BodyShapes.QUADRUPED,
+    EvolutionStage: 1,
+    Image:
+      "https://img.pokemondb.net/sprites/sword-shield/icon/slowpoke.png",
+  },
+  {
+    Index: 80,
+    EN_Name: "Slowbro",
+    FR_Name: "Flagadoss",
+    Type: [PokemonTypes.EAU, PokemonTypes.PSY],
+    Weight: 78.5,
+    Height: 1.6,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_UPPER_LIMBS,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/slowbro.png"
+  },
+  {
+    Index: 81,
+    EN_Name: "Magnemite",
+    FR_Name: "Magnéti",
+    Type: [PokemonTypes.ELECTRIQUE, PokemonTypes.ACIER],
+    Weight: 6.0,
+    Height: 0.3,
+    Generation: 1,
+    Body_Type: BodyShapes.HEAD_ONLY,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/magnemite.png"
+  },
+  {
+    Index: 82,
+    EN_Name: "Magneton",
+    FR_Name: "Magnéton",
+    Type: [PokemonTypes.ELECTRIQUE, PokemonTypes.ACIER],
+    Weight: 60.0,
+    Height: 1.0,
+    Generation: 1,
+    Body_Type: BodyShapes.MULTIPLE_BODIES,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/magneton.png"
+  },
+  {
+    Index: 83,
+    EN_Name: "Farfetch'd",
+    FR_Name: "Canarticho",
+    Type: [PokemonTypes.NORMAL, PokemonTypes.VOL],
+    Weight: 15.0,
+    Height: 0.8,
+    Generation: 1,
+    Body_Type: BodyShapes.TWO_WINGS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/farfetchd.png"
+  },
+  {
+    Index: 84,
+    EN_Name: "Doduo",
+    FR_Name: "Doduo",
+    Type: [PokemonTypes.NORMAL, PokemonTypes.VOL],
+    Weight: 39.2,
+    Height: 1.4,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/doduo.png"
+  },
+  {
+    Index: 85,
+    EN_Name: "Dodrio",
+    FR_Name: "Dodrio",
+    Type: [PokemonTypes.NORMAL, PokemonTypes.VOL],
+    Weight: 85.2,
+    Height: 1.8,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_LIMBS,
+    EvolutionStage: 2,
+    Image:
+      "https://img.pokemondb.net/sprites/sword-shield/icon/dodrio.png",
+  },
+  {
+    Index: 86,
+    EN_Name: "Seel",
+    FR_Name: "Otaria",
+    Type: [PokemonTypes.EAU],
+    Weight: 90,
+    Height: 1.1,
+    Generation: 1,
+    Body_Type: BodyShapes.FISH_LIKE,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/seel.png",
+  },
+  {
+    Index: 87,
+    EN_Name: "Dewgong",
+    FR_Name: "Lamantine",
+    Type: [PokemonTypes.EAU, PokemonTypes.GLACE],
+    Weight: 120,
+    Height: 1.7,
+    Generation: 1,
+    Body_Type: BodyShapes.FISH_LIKE,
+    EvolutionStage: 2,
+    Image:
+      "https://img.pokemondb.net/sprites/sword-shield/icon/dewgong.png",
+  },
+  {
+    Index: 88,
+    EN_Name: "Grimer",
+    FR_Name: "Tadmorv",
+    Type: [PokemonTypes.POISON],
+    Weight: 30,
+    Height: 0.9,
+    Generation: 1,
+    Body_Type: BodyShapes.HEAD_AND_ARM,
+    EvolutionStage: 1,
+    Image:
+      "https://img.pokemondb.net/sprites/sword-shield/icon/grimer.png",
+  },
+  {
+    Index: 89,
+    EN_Name: "Muk",
+    FR_Name: "Grotadmorv",
+    Type: [PokemonTypes.POISON],
+    Weight: 30,
+    Height: 1.2,
+    Generation: 1,
+    Body_Type: BodyShapes.HEAD_AND_ARM,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/muk.png",
+  },
+  {
+    Index: 90,
+    EN_Name: "Shellder",
+    FR_Name: "Kokiyas",
+    Type: [PokemonTypes.EAU],
+    Weight: 4,
+    Height: 0.3,
+    Generation: 1,
+    Body_Type: BodyShapes.HEAD_ONLY,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/shellder.png",
+  },
+  {
+    Index: 91,
+    EN_Name: "Cloyster",
+    FR_Name: "Crustabri",
+    Type: [PokemonTypes.EAU, PokemonTypes.GLACE],
+    Weight: 132.5,
+    Height: 1.5,
+    Generation: 1,
+    Body_Type: BodyShapes.SHELLFISH,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/cloyster.png",
+  },
+  {
+    Index: 92,
+    EN_Name: "Gastly",
+    FR_Name: "Fantominus",
+    Type: [PokemonTypes.SPECTRE, PokemonTypes.POISON],
+    Weight: 0.1,
+    Height: 1.3,
+    Generation: 1,
+    Body_Type: BodyShapes.HEAD_ONLY,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/gastly.png",
+  },
+  {
+    Index: 93,
+    EN_Name: "Haunter",
+    FR_Name: "Spectrum",
+    Type: [PokemonTypes.SPECTRE, PokemonTypes.POISON],
+    Weight: 0.1,
+    Height: 1.6,
+    Generation: 1,
+    Body_Type: BodyShapes.HEAD_AND_ARM,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/haunter.png",
+  },
+  {
+    Index: 94,
+    EN_Name: "Gengar",
+    FR_Name: "Ectoplasma",
+    Type: [PokemonTypes.SPECTRE, PokemonTypes.POISON],
+    Weight: 40.5,
+    Height: 1.5,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_UPPER_LIMBS,
+    EvolutionStage: 3,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/gengar.png",
+  },
+  {
+    Index: 95,
+    EN_Name: "Onix",
+    FR_Name: "Onix",
+    Type: [PokemonTypes.SOL, PokemonTypes.ROCHE],
+    Weight: 210.0,
+    Height: 8.8,
+    Generation: 1,
+    Body_Type: BodyShapes.SNAKE_LIKE,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/onix.png",
+  },
+  {
+    Index: 96,
+    EN_Name: "Drowzee",
+    FR_Name: "Soporifik",
+    Type: [PokemonTypes.PSY],
+    Weight: 32.4,
+    Height: 1.0,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/drowzee.png",
+  },
+  {
+    Index: 97,
+    EN_Name: "Hypno",
+    FR_Name: "Hypnomade",
+    Type: [PokemonTypes.PSY],
+    Weight: 75.6,
+    Height: 1.6,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_LIMBS,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/hypno.png",
+  },
+  {
+    index: 98,
+    EN_Name: "Krabby",
+    FR_Name: "Krabby",
+    Type: [PokemonTypes.EAU],
+    Weight: 6.5,
+    Height: 0.4,
+    Generation: 1,
+    Body_Type: BodyShapes.INSECT_LIKE,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/krabby.png"
+  },
+  {
+    index: 99,
+    EN_Name: "Kingler",
+    FR_Name: "Krabboss",
+    Type: [PokemonTypes.EAU],
+    Weight: 60.0,
+    Height: 1.3,
+    Generation: 1,
+    Body_Type: BodyShapes.INSECT_LIKE,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/kingler.png"
+  },
+  {
+    index: 100,
+    EN_Name: "Voltorb",
+    FR_Name: "Voltorbe",
+    Type: [PokemonTypes.ELECTRIQUE],
+    Weight: 10.4,
+    Height: 0.5,
+    Generation: 1,
+    Body_Type: BodyShapes.HEAD_ONLY,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/voltorb.png"
+  },
+  {
+    index: 101,
+    EN_Name: "Electrode",
+    FR_Name: "Électrode",
+    Type: [PokemonTypes.ELECTRIQUE],
+    Weight: 66.6,
+    Height: 1.2,
+    Generation: 1,
+    Body_Type: BodyShapes.HEAD_ONLY,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/electrode.png"
+  },
+  {
+    index: 102,
+    EN_Name: "Exeggcute",
+    FR_Name: "Nœunœuf",
+    Type: [PokemonTypes.PLANTE, PokemonTypes.PSY],
+    Weight: 2.5,
+    Height: 0.4,
+    Generation: 1,
+    Body_Type: BodyShapes.MULTIPLE_BODIES,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/exeggcute.png"
+  },
+  {
+    index: 103,
+    EN_Name: "Exeggutor",
+    FR_Name: "Noadkoko",
+    Type: [PokemonTypes.PLANTE, PokemonTypes.PSY],
+    Weight: 120.0,
+    Height: 2.0,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_LIMBS,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/exeggutor.png"
+  },
+  {
+    index: 104,
+    EN_Name: "Cubone",
+    FR_Name: "Osselait",
+    Type: [PokemonTypes.SOL],
+    Weight: 6.5,
+    Height: 0.4,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_UPPER_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/cubone.png"
+  },
+  {
+    index: 105,
+    EN_Name: "Marowak",
+    FR_Name: "Ossatueur",
+    Type: [PokemonTypes.SOL],
+    Weight: 45.0,
+    Height: 1.0,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_UPPER_LIMBS,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/marowak.png"
+  },
+  {
+    index: 106,
+    EN_Name: "Hitmonlee",
+    FR_Name: "Kicklee",
+    Type: [PokemonTypes.COMBAT],
+    Weight: 49.8,
+    Height: 1.5,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/hitmonlee.png"
+  },
+  {
+    index: 107,
+    EN_Name: "Hitmonchan",
+    FR_Name: "Tygnon",
+    Type: [PokemonTypes.COMBAT],
+    Weight: 50.2,
+    Height: 1.4,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_TAIL_UPPER_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/hitmonchan.png"
+  },
+  {
+    index: 108,
+    EN_Name: "Lickitung",
+    FR_Name: "Excelangue",
+    Type: [PokemonTypes.NORMAL],
+    Weight: 65.5,
+    Height: 1.2,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_UPPER_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/lickitung.png"
+  },
+  {
+    index: 109,
+    EN_Name: "Koffing",
+    FR_Name: "Smogo",
+    Type: [PokemonTypes.POISON],
+    Weight: 1.0,
+    Height: 0.6,
+    Generation: 1,
+    Body_Type: BodyShapes.HEAD_ONLY,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/koffing.png"
+  },
+  {
+    index: 110,
+    EN_Name: "Weezing",
+    FR_Name: "Smogogo",
+    Type: [PokemonTypes.POISON],
+    Weight: 9.5,
+    Height: 1.2,
+    Generation: 1,
+    Body_Type: BodyShapes.MULTIPLE_BODIES,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/weezing.png"
+  },
+  {
+    Index: 111,
+    EN_Name: "Rhyhorn",
+    FR_Name: "Rhinocorne",
+    Type: [PokemonTypes.SOL, PokemonTypes.ROCHE],
+    Weight: 115.0,
+    Height: 1.0,
+    Generation: 1,
+    Body_Type: BodyShapes.QUADRUPED,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/rhyhorn.png",
+  },
+  {
+    Index: 112,
+    EN_Name: "Rhydon",
+    FR_Name: "Rhinoféros",
+    Type: [PokemonTypes.SOL, PokemonTypes.ROCHE],
+    Weight: 1200.0,
+    Height: 1.9,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_UPPER_LIMBS,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/rhydon.png",
+  },
+  {
+    Index: 113,
+    EN_Name: "Chansey",
+    FR_Name: "Leveinard",
+    Type: [PokemonTypes.NORMAL],
+    Weight: 34.6,
+    Height: 1.1,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/chansey.png",
+  },
+  {
+    Index: 114,
+    EN_Name: "Tangela",
+    FR_Name: "Saquedeneu",
+    Type: [PokemonTypes.PLANTE],
+    Weight: 35.0,
+    Height: 1.0,
+    Generation: 1,
+    Body_Type: BodyShapes.TENTACLES,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/tangela.png",
+  },
+  {
+    Index: 115,
+    EN_Name: "Kangaskhan",
+    FR_Name: "Kangourex",
+    Type: [PokemonTypes.NORMAL],
+    Weight: 80.0,
+    Height: 2.2,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_UPPER_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/kangaskhan.png",
+  },
+  {
+    Index: 116,
+    EN_Name: "Horsea",
+    FR_Name: "Hypotrempe",
+    Type: [PokemonTypes.EAU],
+    Weight: 8.0,
+    Height: 0.4,
+    Generation: 1,
+    Body_Type: BodyShapes.HEAD_AND_NO_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/horsea.png",
+  },
+  {
+    Index: 117,
+    EN_Name: "Seadra",
+    FR_Name: "Hypocéan",
+    Type: [PokemonTypes.EAU],
+    Weight: 25.0,
+    Height: 1.2,
+    Generation: 1,
+    Body_Type: BodyShapes.HEAD_AND_NO_LIMBS,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/seadra.png",
+  },
+  {
+    Index: 118,
+    EN_Name: "Goldeen",
+    FR_Name: "Poissirène",
+    Type: [PokemonTypes.EAU],
+    Weight: 15.0,
+    Height: 0.6,
+    Generation: 1,
+    Body_Type: BodyShapes.FISH_LIKE,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/goldeen.png"
+  },
+  {
+    Index: 119,
+    EN_Name: "Seaking",
+    FR_Name: "Poissoroy",
+    Type: [PokemonTypes.EAU],
+    Weight: 39.0,
+    Height: 1.3,
+    Generation: 1,
+    Body_Type: BodyShapes.FISH_LIKE,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/seaking.png"
+  },
+  {
+    Index: 120,
+    EN_Name: "Staryu",
+    FR_Name: "Stari",
+    Type: [PokemonTypes.EAU],
+    Weight: 34.5,
+    Height: 0.8,
+    Generation: 1,
+    Body_Type: BodyShapes.HEAD_AND_NO_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/staryu.png"
+  },
+  {
+    Index: 121,
+    EN_Name: "Starmie",
+    FR_Name: "Staross",
+    Type: [PokemonTypes.EAU, PokemonTypes.PSY],
+    Weight: 80.0,
+    Height: 1.1,
+    Generation: 1,
+    Body_Type: BodyShapes.HEAD_AND_NO_LIMBS,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/starmie.png"
+  },
+  {
+    Index: 122,
+    EN_Name: "Mr. Mime",
+    FR_Name: "M. Mime",
+    Type: [PokemonTypes.PSY],
+    Weight: 54.5,
+    Height: 1.3,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_TAIL_UPPER_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/mr-mime.png"
+  },
+  {
+    Index: 123,
+    EN_Name: "Scyther",
+    FR_Name: "Insécateur",
+    Type: [PokemonTypes.INSECTE, PokemonTypes.VOL],
+    Weight: 56.0,
+    Height: 1.5,
+    Generation: 1,
+    Body_Type: BodyShapes.FOUR_WINGS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/scyther.png"
+  },
+  {
+    Index: 124,
+    EN_Name: "Jynx",
+    FR_Name: "Lippoutou",
+    Type: [PokemonTypes.GLACE, PokemonTypes.PSY],
+    Weight: 40.6,
+    Height: 1.4,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_TAIL_UPPER_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/jynx.png"
+  },
+  {
+    Index: 125,
+    EN_Name: "Electabuzz",
+    FR_Name: "Élektek",
+    Type: [PokemonTypes.ELECTRIQUE],
+    Weight: 30.0,
+    Height: 1.1,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_TAIL_UPPER_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/electabuzz.png"
+  },
+  {
+    Index: 126,
+    EN_Name: "Magmar",
+    FR_Name: "Magmar",
+    Type: [PokemonTypes.FEU],
+    Weight: 44.5,
+    Height: 1.3,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_UPPER_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/magmar.png"
+  },
+  {
+    Index: 127,
+    EN_Name: "Pinsir",
+    FR_Name: "Scarabrute",
+    Type: [PokemonTypes.INSECTE],
+    Weight: 55.0,
+    Height: 1.5,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_TAIL_UPPER_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/pinsir.png"
+  },
+  {
+    Index: 128,
+    EN_Name: "Tauros",
+    FR_Name: "Tauros",
+    Type: [PokemonTypes.NORMAL],
+    Weight: 88.4,
+    Height: 1.4,
+    Generation: 1,
+    Body_Type: BodyShapes.QUADRUPED,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/tauros.png"
+  },
+  {
+    Index: 129,
+    EN_Name: "Magikarp",
+    FR_Name: "Magicarpe",
+    Type: [PokemonTypes.EAU],
+    Weight: 10.0,
+    Height: 0.9,
+    Generation: 1,
+    Body_Type: BodyShapes.FISH_LIKE,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/magikarp.png"
+  },
+  {
+    Index: 130,
+    EN_Name: "Gyarados",
+    FR_Name: "Léviator",
+    Type: [PokemonTypes.EAU, PokemonTypes.VOL],
+    Weight: 235.0,
+    Height: 6.5,
+    Generation: 1,
+    Body_Type: BodyShapes.SNAKE_LIKE,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/gyarados.png"
+  },
+  {
+    Index: 131,
+    EN_Name: "Lapras",
+    FR_Name: "Lokhlass",
+    Type: [PokemonTypes.EAU, PokemonTypes.GLACE],
+    Weight: 220.0,
+    Height: 2.5,
+    Generation: 1,
+    Body_Type: BodyShapes.FISH_LIKE,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/lapras.png"
+  },
+  {
+    Index: 132,
+    EN_Name: "Ditto",
+    FR_Name: "Métamorph",
+    Type: [PokemonTypes.NORMAL],
+    Weight: 4.0,
+    Height: 0.3,
+    Generation: 1,
+    Body_Type: BodyShapes.HEAD_ONLY,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/ditto.png"
+  },
+  {
+    Index: 133,
+    EN_Name: "Eevee",
+    FR_Name: "Évoli",
+    Type: [PokemonTypes.NORMAL],
+    Weight: 6.5,
+    Height: 0.3,
+    Generation: 1,
+    Body_Type: BodyShapes.QUADRUPED,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/eevee.png"
+  },
+  {
+    Index: 134,
+    EN_Name: "Vaporeon",
+    FR_Name: "Aquali",
+    Type: [PokemonTypes.EAU],
+    Weight: 29.0,
+    Height: 1.0,
+    Generation: 1,
+    Body_Type: BodyShapes.QUADRUPED,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/vaporeon.png"
+  },
+  {
+    Index: 135,
+    EN_Name: "Jolteon",
+    FR_Name: "Voltali",
+    Type: [PokemonTypes.ELECTRIQUE],
+    Weight: 24.5,
+    Height: 0.8,
+    Generation: 1,
+    Body_Type: BodyShapes.QUADRUPED,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/jolteon.png"
+  },
+  {
+    Index: 136,
+    EN_Name: "Flareon",
+    FR_Name: "Pyroli",
+    Type: [PokemonTypes.FEU],
+    Weight: 25.0,
+    Height: 0.9,
+    Generation: 1,
+    Body_Type: BodyShapes.QUADRUPED,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/flareon.png"
+  },
+  {
+    Index: 137,
+    EN_Name: "Porygon",
+    FR_Name: "Porygon",
+    Type: [PokemonTypes.NORMAL],
+    Weight: 36.5,
+    Height: 0.8,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/porygon.png"
+  },
+  {
+    Index: 138,
+    EN_Name: "Omanyte",
+    FR_Name: "Amonita",
+    Type: [PokemonTypes.EAU, PokemonTypes.ROCHE],
+    Weight: 7.5,
+    Height: 0.4,
+    Generation: 1,
+    Body_Type: BodyShapes.TENTACLES,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/omanyte.png"
+  },
+  {
+    Index: 139,
+    EN_Name: 'Omastar',
+    FR_Name: 'Amonistar',
+    Type: [PokemonTypes.EAU, PokemonTypes.ROCHE],
+    Weight: 35.0,
+    Height: 1.0,
+    Generation: 1,
+    Body_Type: BodyShapes.TENTACLES,
+    EvolutionStage: 2,
+    Image: 'https://img.pokemondb.net/sprites/sword-shield/icon/omastar.png',
+  },
+  {
+    Index: 140,
+    EN_Name: 'Kabuto',
+    FR_Name: 'Kabuto',
+    Type: [PokemonTypes.EAU, PokemonTypes.ROCHE],
+    Weight: 11.5,
+    Height: 0.5,
+    Generation: 1,
+    Body_Type: BodyShapes.INSECT_LIKE,
+    EvolutionStage: 1,
+    Image: 'https://img.pokemondb.net/sprites/sword-shield/icon/kabuto.png',
+  },
+  {
+    Index: 141,
+    EN_Name: 'Kabutops',
+    FR_Name: 'Kabutops',
+    Type: [PokemonTypes.EAU, PokemonTypes.ROCHE],
+    Weight: 40.5,
+    Height: 1.3,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_TAIL_UPPER_LIMBS,
+    EvolutionStage: 2,
+    Image: 'https://img.pokemondb.net/sprites/sword-shield/icon/kabutops.png',
+  },
+  {
+    Index: 142,
+    EN_Name: 'Aerodactyl',
+    FR_Name: 'Ptéra',
+    Type: [PokemonTypes.ROCHE, PokemonTypes.VOL],
+    Weight: 59.0,
+    Height: 1.8,
+    Generation: 1,
+    Body_Type: BodyShapes.TWO_WINGS,
+    EvolutionStage: 1,
+    Image: 'https://img.pokemondb.net/sprites/sword-shield/icon/aerodactyl.png',
+  },
+  {
+    Index: 143,
+    EN_Name: 'Snorlax',
+    FR_Name: 'Ronflex',
+    Type: [PokemonTypes.NORMAL],
+    Weight: 460.0,
+    Height: 2.1,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_NO_TAIL_UPPER_LIMBS,
+    EvolutionStage: 1,
+    Image: 'https://img.pokemondb.net/sprites/sword-shield/icon/snorlax.png',
+  },
+  {
+    Index: 144,
+    EN_Name: 'Articuno',
+    FR_Name: 'Artikodin',
+    Type: [PokemonTypes.GLACE, PokemonTypes.VOL],
+    Weight: 55.4,
+    Height: 1.7,
+    Generation: 1,
+    Body_Type: BodyShapes.TWO_WINGS,
+    EvolutionStage: 1,
+    Image: 'https://img.pokemondb.net/sprites/sword-shield/icon/articuno.png',
+  },
+  {
+    Index: 145,
+    EN_Name: 'Zapdos',
+    FR_Name: 'Électhor',
+    Type: [PokemonTypes.ELECTRIQUE, PokemonTypes.VOL],
+    Weight: 52.6,
+    Height: 1.6,
+    Generation: 1,
+    Body_Type: BodyShapes.TWO_WINGS,
+    EvolutionStage: 1,
+    Image: 'https://img.pokemondb.net/sprites/sword-shield/icon/zapdos.png',
+  },
+  {
+    Index: 146,
+    EN_Name: "Moltres",
+    FR_Name: "Sulfura",
+    Type: [PokemonTypes.FEU, PokemonTypes.VOL],
+    Weight: 60.0,
+    Height: 2.0,
+    Generation: 1,
+    Body_Type: BodyShapes.TWO_WINGS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/moltres.png",
+  },
+  {
+    Index: 147,
+    EN_Name: "Dratini",
+    FR_Name: "Minidraco",
+    Type: [PokemonTypes.DRAGON],
+    Weight: 3.3,
+    Height: 1.8,
+    Generation: 1,
+    Body_Type: BodyShapes.SNAKE_LIKE,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/dratini.png",
+  },
+  {
+    Index: 148,
+    EN_Name: "Dragonair",
+    FR_Name: "Draco",
+    Type: [PokemonTypes.DRAGON],
+    Weight: 16.5,
+    Height: 4.0,
+    Generation: 1,
+    Body_Type: BodyShapes.SNAKE_LIKE,
+    EvolutionStage: 2,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/dragonair.png",
+  },
+  {
+    Index: 149,
+    EN_Name: "Dragonite",
+    FR_Name: "Dracolosse",
+    Type: [PokemonTypes.DRAGON, PokemonTypes.VOL],
+    Weight: 210.0,
+    Height: 2.2,
+    Generation: 1,
+    Body_Type: BodyShapes.TWO_WINGS,
+    EvolutionStage: 3,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/dragonite.png",
+  },
+  {
+    Index: 150,
+    EN_Name: "Mewtwo",
+    FR_Name: "Mewtwo",
+    Type: [PokemonTypes.PSY],
+    Weight: 122.0,
+    Height: 2.0,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_UPPER_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/mewtwo.png",
+  },
+  {
+    Index: 151,
+    EN_Name: "Mew",
+    FR_Name: "Mew",
+    Type: [PokemonTypes.PSY],
+    Weight: 4.0,
+    Height: 0.4,
+    Generation: 1,
+    Body_Type: BodyShapes.BIPED_UPPER_LIMBS,
+    EvolutionStage: 1,
+    Image: "https://img.pokemondb.net/sprites/sword-shield/icon/mew.png",
+  }
+    ];
+
+    var pokesNames = [];
+    var randomId = getRandomInt(pokes.length);
+    var text = "";
+    var classes = [
+        "wrong",
+        "part-wrong",
+        "true"
+    ];
+
+    for (let i = 0; i < pokes.length; i++) {
+        pokesNames[i] = pokes[i].FR_Name;
+    }
+
+    for(let i = 0; i < pokes.length; i++) {
+        pokes[i].Type = pokes[i].Type.sort();
+    }
+
+    function getRandomInt(max) {
+        return Math.floor(Math.random() * max);
+    }
+
+    function findCommonElement(array1, array2) {
+         for(let i = 0; i < array1.length; i++) {
+            for(let j = 0; j < array2.length; j++) {
+                if(array1[i] === array2[j]) {
+                    return true;
+                }
+            }
+         }
+         return false;
+     }
+
+    function isSameValue(a, b, type, field) {
+        if (type === "string")
+            return (pokes[a][field] === pokes[b][field] ? 2 : 0);
+        else if (type === "arr")
+            if (pokes[a][field].join(",") === pokes[b][field].join(","))
+                return 2;
+            else
+                return (findCommonElement(pokes[a][field], pokes[b][field]) ? 1 : 0);
+        else
+            return 0;
+    }
+
+    function GetArrowForNumbers(index, field) {
+      if (parseFloat(pokes[index][field]) > parseFloat(pokes[randomId][field]))
+        return "⬇️";
+      if (parseFloat(pokes[index][field]) < parseFloat(pokes[randomId][field]))
+        return "⬆️";
+      return "";
+    }
+
+    function checkPoke() {
+        for (let i = 0; i < pokes.length; i++) {
+            if (document.getElementById('selectPoke').value === pokes[i].FR_Name) {
+                PrintPokeLine(i);
+            }
+        }
+    }
+
+    function GetImageForBodyType(type) {
+      return '<img class="body-type" src="' + BodyTypeUrls[type] + '">';
+    }
+
+    function GetImageForType(type) {
+      return '<img class="type" src="' + PokemonTypeUrls[type] + '">';
+    }
+
+    function GetAllTypesImage(types) {
+      imgs = "";
+      for (let i = 0; i < types.length; i++) {
+        imgs += GetImageForType(types[i]) + "<br>";
+      }
+      return imgs;
+    }
+
+    function PrintPokeLine(index) {
+        text = '<tr>';
+        text += '<td class="poke_ico"><img id="pic" src="' + pokes[index].Image + '"></td>';
+        text += '<td class="' + classes[isSameValue(index, randomId, "string", "EN_Name")] + '">' + pokes[index].FR_Name + "</td>";
+        text += '<td class="' + classes[isSameValue(index, randomId, "arr", "Type")] + '">' + GetAllTypesImage(pokes[index].Type.sort()) + "</td>";
+        text += '<td class="' + classes[isSameValue(index, randomId, "string", "Weight")] + '">' + pokes[index].Weight + " kg&ensp;" + GetArrowForNumbers(index, "Weight") + "</td>";
+        text += '<td class="' + classes[isSameValue(index, randomId, "string", "Height")] + '">' + pokes[index].Height + " m&ensp;" + GetArrowForNumbers(index, "Height") + "</td>";
+        text += '<td class="' + classes[isSameValue(index, randomId, "string", "Generation")] + '">' + pokes[index].Generation + "&ensp;" + GetArrowForNumbers(index, "Generation") + "</td>";
+        text += '<td class="' + classes[isSameValue(index, randomId, "string", "EvolutionStage")] + '">' + pokes[index].EvolutionStage + "&ensp;" + GetArrowForNumbers(index, "EvolutionStage") + "</td>";
+        text += '<td class="' + classes[isSameValue(index, randomId, "string", "Body_Type")] + '">' + GetImageForBodyType(pokes[index].Body_Type) + "</td>";
+        text += '</tr>';
+
+        var tableRef = document.getElementById('myTable').getElementsByTagName('tbody')[0];
+        var newRow = tableRef.insertRow(tableRef.rows.length);
+        newRow.innerHTML = text;
+    }
+
+    function GetIndexFromFRName(name) {
+      for (let i = 0; i < pokesNames.length; i++) {
+        if (pokesNames[i] == name)
+          return i;
+      }
+    }
+
+    function change(value) {
+      PrintPokeLine(GetIndexFromFRName(value));
+    }
+</script>
+
+<div class="main-container">
+    <img id="logo" src="color_logo.png">
+    <div class="selection">
+        <select id="selectPoke" onChange="change(this.value);">
+            <option>Choose a Pokemon</option>
+        </select>
+    </div>
+    <div class="my-table">
+        <table id="myTable">
+            <tr>
+              <th>Poke</th>
+              <th>Nom</th>
+              <th>Type</th>
+              <th>Poids</th>
+              <th>Taille</th>
+              <th>Génération</th>
+              <th>Stade</th>
+              <th>Type de corps</th>
+            </tr>
+        </table>
+    </div>
+    <button id="solution-button" type="button" onclick='PrintPokeLine(randomId)'>Get Solution</button>
+
+</div>
+</body>
+<script>
+    for (var i = 0; i < pokesNames.length; i++) {
+        var opt = pokesNames[i];
+        var el = document.createElement("option");
+        el.textContent = opt;
+        el.value = opt;
+        document.getElementById("selectPoke").appendChild(el);
+    }
+</script>
+</html>
+
+
+<!--
+
+Peux-tu me donner un tableau JS ou chaque objet à l'intérieur sera un pokémon de la 1ere génération. Chaque pokemon doit avoir les informations suivantes :
+Index (int), EN_Name (string), FR_Name (string), Type (un tableau de PokemonTypes), Weight (float), Height (float), Generation (int), Body_Type (BodyShapes), Image (string)
+
+Avec les enums suivantes :
+
+const BodyShapes = {
+  HEAD_ONLY: 0,
+  SNAKE_LIKE: 1,
+  FISH_LIKE: 2,
+  HEAD_AND_ARM: 3,
+  HEAD_AND_NO_LIMBS: 4,
+  BIPED_UPPER_LIMBS: 5,
+  BIPED_NO_LIMBS: 6,
+  QUADRUPED: 7,
+  TWO_WINGS: 8,
+  TENTACLES: 9,
+  MULTIPLE_BODIES: 10,
+  BIPED_NO_TAIL_UPPER_LIMBS: 11,
+  FOUR_WINGS: 12,
+  INSECT_LIKE: 13,
+}
+
+const PokemonTypes = {
+  NORMAL: 0,
+  FEU: 1,
+  EAU: 2,
+  ELECTRIQUE: 3,
+  PLANTE: 4,
+  GLACE: 5,
+  COMBAT: 6,
+  POISON: 7,
+  SOL: 8,
+  VOL: 9,
+  PSY: 10,
+  INSECTE: 11,
+  ROCHE: 12,
+  SPECTRE: 13,
+  DRAGON: 14,
+  TENEBRES: 15,
+  ACIER: 16,
+  FEE: 17,
+}
+
+Les Image doivent avoir le format suivant :
+"https://img.pokemondb.net/sprites/sword-shield/icon/EN_NAME.png"
+-->
