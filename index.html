@@ -6,6 +6,36 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
 <style>
+
+  .hidden {
+    display: none;
+  }
+
+  .types {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: #f9f9f9;
+  }
+
+  .type-in-list {
+    display: block;
+    max-height: calc(100vh / 18 - (1.5rem));
+    margin: 0.5rem 1.5rem;
+    width: auto;
+    height: auto;
+    border-radius: 0.2rem;
+  }
+
+  .greyed-type {
+    filter: grayscale(1) brightness(30%);
+    opacity: 80%;
+  }
+
   div {
     font-family: 'Roboto', sans-serif;
   }
@@ -82,9 +112,15 @@
     }
 
     #solution-button {
-        position: absolute;
+        position: fixed;
         bottom: 2rem;
         right: 2rem;
+    }
+
+    #hide-types-button {
+        position: fixed;
+        bottom: 2rem;
+        left: 2rem;
     }
 
     .main-container {
@@ -119,20 +155,20 @@
 <script>
 
 const BodyTypeUrls = [
-"https://static.wikia.nocookie.net/pokemon/images/9/9d/Shape01.png",
-"https://static.wikia.nocookie.net/pokemon/images/4/4c/Shape02.png",
-"https://static.wikia.nocookie.net/pokemon/images/d/de/Shape03.png",
-"https://static.wikia.nocookie.net/pokemon/images/8/8a/Shape04.png",
-"https://static.wikia.nocookie.net/pokemon/images/8/86/Shape05.png",
-"https://static.wikia.nocookie.net/pokemon/images/1/16/Shape06.png",
-"https://static.wikia.nocookie.net/pokemon/images/a/a7/Shape07.png",
-"https://static.wikia.nocookie.net/pokemon/images/6/6f/Shape08.png",
-"https://static.wikia.nocookie.net/pokemon/images/2/22/Shape09.png",
-"https://static.wikia.nocookie.net/pokemon/images/6/65/Shape10.png",
-"https://static.wikia.nocookie.net/pokemon/images/0/06/Shape11.png",
-"https://static.wikia.nocookie.net/pokemon/images/b/b6/Shape12.png",
-"https://static.wikia.nocookie.net/pokemon/images/5/5a/Shape13.png",
-"https://static.wikia.nocookie.net/pokemon/images/0/06/Shape14.png",
+  "https://static.wikia.nocookie.net/pokemon/images/9/9d/Shape01.png",
+  "https://static.wikia.nocookie.net/pokemon/images/4/4c/Shape02.png",
+  "https://static.wikia.nocookie.net/pokemon/images/d/de/Shape03.png",
+  "https://static.wikia.nocookie.net/pokemon/images/8/8a/Shape04.png",
+  "https://static.wikia.nocookie.net/pokemon/images/8/86/Shape05.png",
+  "https://static.wikia.nocookie.net/pokemon/images/1/16/Shape06.png",
+  "https://static.wikia.nocookie.net/pokemon/images/a/a7/Shape07.png",
+  "https://static.wikia.nocookie.net/pokemon/images/6/6f/Shape08.png",
+  "https://static.wikia.nocookie.net/pokemon/images/2/22/Shape09.png",
+  "https://static.wikia.nocookie.net/pokemon/images/6/65/Shape10.png",
+  "https://static.wikia.nocookie.net/pokemon/images/0/06/Shape11.png",
+  "https://static.wikia.nocookie.net/pokemon/images/b/b6/Shape12.png",
+  "https://static.wikia.nocookie.net/pokemon/images/5/5a/Shape13.png",
+  "https://static.wikia.nocookie.net/pokemon/images/0/06/Shape14.png",
 ];
 
 const BodyShapes = {
@@ -498,7 +534,7 @@ const PokemonTypes = {
     Height: 0.4,
     Generation: 1,
     Body_Type: BodyShapes.QUADRUPED,
-    EvolutionStage: 2,
+    EvolutionStage: 1,
     Image: "https://img.pokemondb.net/sprites/sword-shield/icon/pikachu.png",
   },
   {
@@ -510,7 +546,7 @@ const PokemonTypes = {
     Height: 0.8,
     Generation: 1,
     Body_Type: BodyShapes.BIPED_NO_TAIL_UPPER_LIMBS,
-    EvolutionStage: 3,
+    EvolutionStage: 2,
     Image: "https://img.pokemondb.net/sprites/sword-shield/icon/raichu.png",
   },
   {
@@ -2029,6 +2065,7 @@ const PokemonTypes = {
   }
     ];
 
+    var statutType = true;
     var pokesNames = [];
     var randomId = getRandomInt(pokes.length);
     var text = "";
@@ -2044,6 +2081,41 @@ const PokemonTypes = {
 
     for(let i = 0; i < pokes.length; i++) {
         pokes[i].Type = pokes[i].Type.sort();
+    }
+
+    function hasClass(ele,cls) {
+      return !!ele.className.match(new RegExp('(\\s|^)'+cls+'(\\s|$)'));
+    }
+
+    function addClass(ele,cls) {
+      if (!hasClass(ele,cls)) ele.className += " "+cls;
+    }
+
+    function removeClass(ele,cls) {
+      if (hasClass(ele,cls)) {
+        var reg = new RegExp('(\\s|^)'+cls+'(\\s|$)');
+        ele.className=ele.className.replace(reg,' ');
+      }
+    }
+
+    function ChangeStatutTypes() {
+      statutType = !statutType;
+      const el = document.querySelector("#type-tab");
+      if (statutType) {
+        addClass(el, "types");
+        removeClass(el, "hidden");
+      } else {
+        addClass(el, "hidden");
+        removeClass(el, "types");
+      }
+    }
+
+    function GreyTypes(poke) {
+      const typesEl = document.querySelector("#type-tab");
+      for (var i = 0; i < poke.Type.length; i++) {
+        if (!hasClass(typesEl.children[poke.Type[i]], "greyed-type"))
+          addClass(typesEl.children[poke.Type[i]], "greyed-type");
+      }
     }
 
     function getRandomInt(max) {
@@ -2131,9 +2203,29 @@ const PokemonTypes = {
 
     function change(value) {
       PrintPokeLine(GetIndexFromFRName(value));
+      GreyTypes(pokes[GetIndexFromFRName(value)]);
     }
 </script>
-
+<div id="type-tab" class="types">
+  <img class="type-in-list" src="https://upload.wikimedia.org/wikipedia/commons/1/1d/Logo_Type_Normal_Pokemon_EB.png">
+  <img class="type-in-list" src="https://upload.wikimedia.org/wikipedia/commons/d/da/Logo_Type_Feu_Pokemon_EB.png">
+  <img class="type-in-list" src="https://upload.wikimedia.org/wikipedia/commons/b/b6/Logo_Type_Eau_Pokemon_EB.png">
+  <img class="type-in-list" src="https://upload.wikimedia.org/wikipedia/commons/3/31/Logo_Type_%C3%89lectrik_Pokemon_EB.png">
+  <img class="type-in-list" src="https://upload.wikimedia.org/wikipedia/commons/1/18/Logo_Type_Plante_Pokemon_EB.png">
+  <img class="type-in-list" src="https://upload.wikimedia.org/wikipedia/commons/d/dd/Logo_Type_Glace_Pokemon_EB.png">
+  <img class="type-in-list" src="https://upload.wikimedia.org/wikipedia/commons/2/22/Logo_Type_Combat_Pokemon_EB.png">
+  <img class="type-in-list" src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Logo_Type_Poison_Pokemon_EB.png">
+  <img class="type-in-list" src="https://upload.wikimedia.org/wikipedia/commons/7/77/Logo_Type_Sol_Pokemon_EB.png">
+  <img class="type-in-list" src="https://upload.wikimedia.org/wikipedia/commons/e/e9/Logo_Type_Vol_Pokemon_EB.png">
+  <img class="type-in-list" src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Logo_Type_Psy_Pokemon_EB.png">
+  <img class="type-in-list" src="https://upload.wikimedia.org/wikipedia/commons/9/90/Logo_Type_Insecte_Pokemon_EB.png">
+  <img class="type-in-list" src="https://upload.wikimedia.org/wikipedia/commons/8/84/Logo_Type_Roche_Pokemon_EB.png">
+  <img class="type-in-list" src="https://upload.wikimedia.org/wikipedia/commons/d/da/Logo_Type_Spectre_Pokemon_EB.png">
+  <img class="type-in-list" src="https://upload.wikimedia.org/wikipedia/commons/5/51/Logo_Type_Dragon_Pokemon_EB.png">
+  <img class="type-in-list" src="https://upload.wikimedia.org/wikipedia/commons/4/43/Logo_Type_Tenebres_Pokemon_EB.png">
+  <img class="type-in-list" src="https://upload.wikimedia.org/wikipedia/commons/6/6e/Logo_Type_Acier_Pokemon_EB.png">
+  <img class="type-in-list" src="https://upload.wikimedia.org/wikipedia/commons/5/5d/Logo_Type_F%C3%A9e_Pokemon_EB.png">
+</div>
 <div class="main-container">
     <img id="logo" src="color_logo.png">
     <div class="selection">
@@ -2156,7 +2248,7 @@ const PokemonTypes = {
         </table>
     </div>
     <button id="solution-button" type="button" onclick='PrintPokeLine(randomId)'>Get Solution</button>
-
+    <button id="hide-types-button" type="button" onclick='ChangeStatutTypes()'>Types</button>
 </div>
 </body>
 <script>
